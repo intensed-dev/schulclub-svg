@@ -66,6 +66,14 @@
         lgstatus_title.innerText = title;
         lgstatus.showModal();
     }
+
+    function login(username, password) {
+        const { ok, code } = await getLogin(username, password);
+
+        if (ok) {
+          localStorage.setItem("loginCode", code);
+        }
+    }
 </script>
   
 </body>
