@@ -17,7 +17,7 @@
     <div class="text-center lg:text-left">
       <h1 class="text-5xl font-bold">Please log in.</h1>
       <p class="py-6">
-        This website is safed by a password. Please enter your password or use the <button class="btn" onclick="demo_login();">Demo Login</button>.
+        This website is safed by a password. Please enter your password or use the <button class="btn btn-sm" onclick="demo_login();">Demo Login</button>.
       </p>
     </div>
     <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
@@ -27,7 +27,7 @@
           <input type="text" class="input" placeholder="Username" id="username" />
           <label class="label">Password</label>
           <input type="password" class="input" placeholder="Password" id="password" />
-          <div><a class="link link-hover">Forgot password?</a></div>
+          <div><button class="link link-hover" onclick='show_lgstatus("Forgot your Password?", "Please message an admin to reset your password or use the demo-login.");'>Forgot password?</button></div>
           <button class="btn btn-neutral mt-4">Login</button>
         </fieldset>
       </div>
