@@ -1,1 +1,43 @@
-<h1>Test</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login. | Schulclub SVG Generator</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" >
+</head>
+<body>
+
+<div class="hero bg-base-200 min-h-screen">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <h1 class="text-5xl font-bold">Please log in.</h1>
+      <p class="py-6">
+        This repository is locked. Please enter the Password and admin has provided.
+      </p>
+
+      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <legend class="fieldset-legend">Login</legend>
+
+        <!-- Username -->
+        <label class="label">Username</label>
+        <input type="text" class="input" placeholder="Username" id="username" />
+        
+        <!-- Password -->
+        <label class="label">Password</label>
+        <input type="password" class="input" placeholder="Password" id="password" />
+
+        <!-- Login -->
+        <button class="btn btn-neutral mt-4" id="login">Login</button>
+      </fieldset>
+      
+    </div>
+  </div>
+</div>
+  
+</body>
+</html>
