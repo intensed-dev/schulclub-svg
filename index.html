@@ -13,32 +13,59 @@
 <body>
 
 <div class="hero bg-base-200 min-h-screen">
-  <div class="hero-content text-center">
-    <div class="max-w-md">
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
       <h1 class="text-5xl font-bold">Please log in.</h1>
       <p class="py-6">
-        This repository is locked. Please enter the Password an admin has provided.
+        This website is safed by a password. Please enter your password or use the <button class="btn" onclick="demo_login();">Demo Login</button>.
       </p>
-
-      <div class="text-center align-center" align="center">
-          <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-            <legend class="fieldset-legend">Login</legend>
-    
-            <!-- Username -->
-            <label class="label">Username</label>
-            <input type="text" class="input" placeholder="Username" id="username" />
-            
-            <!-- Password -->
-            <label class="label">Password</label>
-            <input type="password" class="input" placeholder="Password" id="password" />
-    
-            <!-- Login -->
-            <button class="btn btn-neutral mt-4" id="login">Login</button>
-          </fieldset>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div class="card-body">
+        <fieldset class="fieldset">
+          <label class="label">Username</label>
+          <input type="text" class="input" placeholder="Username" id="username" />
+          <label class="label">Password</label>
+          <input type="password" class="input" placeholder="Password" id="password" />
+          <div><a class="link link-hover">Forgot password?</a></div>
+          <button class="btn btn-neutral mt-4">Login</button>
+        </fieldset>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Open the modal using ID.showModal() method -->
+<!-- login_status.showModal() -->
+<dialog id="login_status" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold" id="lgstatus_title">Loading...</h3>
+    <p class="py-4" id="lgstatus_text">Loading...</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>Got it, close</button>
+  </form>
+</dialog>
+
+<script>
+    const usernameField = document.getElementById("username");
+    const passwordField = document.getElementById("password");
+    const lgstatus = document.getElementById("login_status");
+    const lgstatus_text = document.getElementById("lgstatus_text");
+    const lgstatus_title = document.getElementById("lgstatus_title");
+    
+    function demo_login() {
+        usernameField.value = "Demo";
+        passwordField.value = "Demo";
+        show_lgstatus("Successful", "Your temporary demo-login is now able to be opened.");
+    }
+
+    function show_lgstatus(title, text) {
+        lgstatus_text.innerText = text;
+        lgstatus_title.innerText = title;
+        lgstatus.showModal();
+    }
+</script>
   
 </body>
 </html>
