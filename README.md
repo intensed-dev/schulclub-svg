@@ -8,7 +8,6 @@ Schulclub SVG halt ne? Wer kennts nd
 ```
 
 ```html
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
