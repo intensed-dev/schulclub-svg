@@ -1,4 +1,4 @@
-async function login(username, password) {
+async function getLogin(username, password) {
   const response = await fetch(
     "https://schulclub.intensed.workers.dev/v1/svgs/logins",
     {
