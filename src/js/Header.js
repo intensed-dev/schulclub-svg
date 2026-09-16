@@ -47,3 +47,7 @@ const HeaderTemplate = `
   </div>
 </div>
 `;
+
+export default function loadHeader(headerEl) {
+  document.getElementById(headerEl).innerHTML = HeaderTemplate;
+}
