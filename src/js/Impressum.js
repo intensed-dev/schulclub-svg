@@ -2,8 +2,6 @@ const wagonsRoot = document.querySelector("#wagons");
 const wagonTemplate = document.querySelector("#wagon-template");
 const personTemplate = document.querySelector("#person-template");
 const preview = document.querySelector("#preview");
-const titleInput = document.querySelector("#magazine-title");
-const pageSizeInput = document.querySelector("#page-size");
 const accentInput = document.querySelector("#accent-color");
 const wagonCount = document.querySelector("#wagon-count");
 const pageCount = document.querySelector("#page-count");
@@ -14,26 +12,19 @@ function escapeXml(value = "") {
   return String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[char]));
 }
 
-function addPerson(wagon, data = {}) {
+function addPerson(wagon) {
   const fragment = personTemplate.content.cloneNode(true);
   const item = fragment.querySelector(".person-editor");
   const name = item.querySelector(".person-name");
   const roles = item.querySelector(".person-roles");
   const photo = item.querySelector(".person-photo");
   const fileInput = item.querySelector(".photo-input");
-  name.value = data.name || "";
-  roles.value = data.roles || "";
-  if (data.photo) {
-    photo.src = data.photo;
-    photo.hidden = false;
-    item.querySelector(".photo-placeholder").hidden = true;
-  }
+
   name.addEventListener("input", render);
   roles.addEventListener("input", render);
   fileInput.addEventListener("change", () => {
     const file = fileInput.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return;
+    if (!file || !file.type.startsWith("image/")) return;
     const reader = new FileReader();
     reader.onload = () => {
       photo.src = reader.result;
@@ -43,11 +34,14 @@ function addPerson(wagon, data = {}) {
     };
     reader.readAsDataURL(file);
   });
+
   item.querySelector(".remove-person").addEventListener("click", () => {
     item.remove();
     if (!wagon.querySelector(".person-editor")) addPerson(wagon);
+    updateEditor();
     render();
   });
+
   wagon.querySelector(".people-list").append(fragment);
   render();
 }
@@ -56,6 +50,7 @@ function addWagon() {
   const fragment = wagonTemplate.content.cloneNode(true);
   const wagon = fragment.querySelector(".wagon-editor");
   wagon.dataset.id = String(nextId++);
+
   wagon.querySelector(".add-person").addEventListener("click", () => {
     if (wagon.querySelectorAll(".person-editor").length >= 2) return;
     addPerson(wagon);
@@ -66,6 +61,7 @@ function addWagon() {
     updateEditor();
     render();
   });
+
   wagonsRoot.append(fragment);
   const added = wagonsRoot.lastElementChild;
   addPerson(added);
@@ -88,78 +84,86 @@ function updateEditor() {
     const addButton = wagon.querySelector(".add-person");
     const full = wagon.querySelectorAll(".person-editor").length >= 2;
     addButton.disabled = full;
-    addButton.innerHTML = full ? '<i class="fa-solid fa-check"></i> Wagon voll' : '<i class="fa-solid fa-user-plus"></i> Zweite Person hinzufügen';
+    addButton.innerHTML = full
+      ? '<i class="fa-solid fa-check"></i> Wagon voll'
+      : '<i class="fa-solid fa-user-plus"></i> Zweite Person hinzufügen';
   });
   wagonCount.textContent = `${wagonsRoot.children.length} WAGONS`;
 }
 
-function svgText(text, x, y, size, weight = 500, fill = "#252a2c", anchor = "start") {
-  return `<text x="${x}" y="${y}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${escapeXml(text)}</text>`;
+function svgText(value, x, y, size, weight = 500, fill = "#252a2c", anchor = "start") {
+  return `<text x="${x}" y="${y}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${escapeXml(value)}</text>`;
+}
+
+function personWindow(person, x, y, width, id) {
+  const photoSize = 48;
+  const photoX = x + 12;
+  const photoY = y + 14;
+  const centerY = photoY + photoSize / 2;
+  const image = person.photo
+    ? `<clipPath id="portrait-${id}"><circle cx="${photoX + photoSize / 2}" cy="${centerY}" r="${photoSize / 2}"/></clipPath><image href="${escapeXml(person.photo)}" x="${photoX}" y="${photoY}" width="${photoSize}" height="${photoSize}" preserveAspectRatio="xMidYMid slice" clip-path="url(#portrait-${id})"/>`
+    : `<circle cx="${photoX + photoSize / 2}" cy="${centerY}" r="${photoSize / 2}" fill="#e8dfca"/><text x="${photoX + photoSize / 2}" y="${centerY + 7}" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#746d5e">${escapeXml((person.name[0] || "?").toUpperCase())}</text>`;
+  const name = person.name.length > 15 ? person.name.slice(0, 14) + "…" : person.name;
+  const role = person.roles.length > 19 ? person.roles.slice(0, 18) + "…" : person.roles;
+  return `<g>
+    <rect x="${x}" y="${y}" width="${width}" height="78" rx="8" fill="#f6eedc" stroke="#d9c89f" stroke-width="2"/>
+    ${image}
+    ${svgText(name, photoX + photoSize + 9, y + 34, 13, 700, "#292b2b")}
+    ${svgText(role, photoX + photoSize + 9, y + 53, 9, 500, "#68675f")}
+  </g>`;
+}
+
+function buildWagon(wagon, index, x, y, accent) {
+  const people = wagon.people.slice(0, 2);
+  const windowWidth = people.length === 1 ? 188 : 145;
+  const windowGap = people.length === 1 ? 0 : 10;
+  const firstX = people.length === 1 ? x + 86 : x + 22;
+  const windows = people.map((person, personIndex) =>
+    personWindow(person, firstX + personIndex * (windowWidth + windowGap), y + 58, windowWidth, `w${index}-p${personIndex}`)
+  ).join("");
+
+  return `<g>
+    <!-- classic carriage roof -->
+    <path d="M${x + 30} ${y + 48} Q${x + 30} ${y + 23} ${x + 58} ${y + 23} H${x + 302} Q${x + 330} ${y + 23} ${x + 330} ${y + 48} Z" fill="#292e30" stroke="#171b1c" stroke-width="3"/>
+    <rect x="${x + 12}" y="${y + 43}" width="356" height="113" rx="13" fill="${accent}" stroke="#292e30" stroke-width="4"/>
+    <path d="M${x + 20} ${y + 51} H${x + 360}" stroke="#f0d9a5" stroke-width="4"/>
+    ${windows}
+    <path d="M${x + 20} ${y + 137} H${x + 360}" stroke="#f0d9a5" stroke-width="4"/>
+    <rect x="${x + 155}" y="${y + 145}" width="70" height="13" rx="3" fill="#292e30"/>
+    <path d="M${x + 10} ${y + 164} H${x + 370}" stroke="#292e30" stroke-width="7" stroke-linecap="round"/>
+    <rect x="${x + 46}" y="${y + 157}" width="278" height="12" rx="4" fill="#4a4d4b"/>
+    <circle cx="${x + 92}" cy="${y + 177}" r="20" fill="#252a2c" stroke="#a9a08e" stroke-width="5"/>
+    <circle cx="${x + 288}" cy="${y + 177}" r="20" fill="#252a2c" stroke="#a9a08e" stroke-width="5"/>
+    <circle cx="${x + 92}" cy="${y + 177}" r="6" fill="#d8cba9"/>
+    <circle cx="${x + 288}" cy="${y + 177}" r="6" fill="#d8cba9"/>
+    <path d="M${x} ${y + 154} H${x + 12} M${x + 368} ${y + 154} H${x + 380}" stroke="#292e30" stroke-width="7" stroke-linecap="round"/>
+  </g>`;
 }
 
 function buildSvg() {
-  const data = collectData();
-  const perPage = Number(pageSizeInput.value);
-  const pages = [];
-  for (let i = 0; i < data.length; i += perPage) pages.push(data.slice(i, i + perPage));
-  if (!pages.length) pages.push([]);
-  const pageW = 1000;
-  const pageH = Math.max(720, Math.ceil(perPage / 2) * 210 + 290);
-  const gap = 64;
-  const height = pages.length * (pageH + gap) - gap;
+  const wagons = collectData();
+  const width = 1200;
+  const columns = 3;
+  const rowHeight = 235;
+  const rows = Math.max(1, Math.ceil(wagons.length / columns));
+  const height = rows * rowHeight + 24;
   const accent = accentInput.value;
-  const title = titleInput.value.trim() || "Unser Schulmagazin";
-  let content = "";
-  pages.forEach((page, pageIndex) => {
-    const offsetY = pageIndex * (pageH + gap);
-    content += `<g transform="translate(0 ${offsetY})">
-      <rect width="${pageW}" height="${pageH}" rx="22" fill="#f5f1e8"/>
-      <rect x="30" y="30" width="940" height="660" rx="14" fill="none" stroke="#d7d0c3" stroke-width="2"/>
-      <rect x="30" y="30" width="940" height="10" rx="5" fill="${accent}"/>
-      ${svgText("SCHULCLUB  /  IMPRESSUM", 66, 88, 15, 700, accent)}
-      ${svgText(title, 66, 145, 39, 800, "#252a2c")}
-      ${svgText("DIE MENSCHEN HINTER DIESER AUSGABE", 68, 174, 12, 600, "#74736e")}
-      <path d="M65 192 H935" stroke="#d7d0c3" stroke-width="2"/>
-      ${page.map((wagon, index) => {
-        const globalIndex = pageIndex * perPage + index;
-        const col = index % 2;
-        const row = Math.floor(index / 2);
-        const x = 66 + col * 440;
-        const y = 220 + row * 210;
-        const people = wagon.people;
-        const personMarkup = people.map((person, pIndex) => {
-          const px = x + 20 + pIndex * 195;
-          const image = person.photo
-            ? `<clipPath id="clip-${globalIndex}-${pIndex}"><circle cx="${px + 42}" cy="${y + 60}" r="31"/></clipPath><image href="${escapeXml(person.photo)}" x="${px + 11}" y="${y + 29}" width="62" height="62" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-${globalIndex}-${pIndex})"/>`
-            : `<circle cx="${px + 42}" cy="${y + 60}" r="31" fill="#e8e0d2"/><text x="${px + 42}" y="${y + 68}" font-family="Arial" font-size="22" fill="#77736b" text-anchor="middle">${escapeXml((person.name[0] || "?").toUpperCase())}</text>`;
-          const name = person.name.length > 18 ? person.name.slice(0, 17) + "…" : person.name;
-          const role = person.roles.length > 24 ? person.roles.slice(0, 23) + "…" : person.roles;
-          return `<g>${image}${svgText(name, px + 84, y + 55, 16, 700)}${svgText(role, px + 84, y + 80, 11, 500, "#6e706d")}</g>`;
-        }).join("");
-        return `<g>
-          <rect x="${x}" y="${y}" width="414" height="150" rx="16" fill="#fffdf8" stroke="#cfc8ba" stroke-width="2"/>
-          <rect x="${x}" y="${y}" width="414" height="9" rx="4" fill="${accent}"/>
-          <circle cx="${x + 72}" cy="${y + 151}" r="13" fill="#53595a"/><circle cx="${x + 342}" cy="${y + 151}" r="13" fill="#53595a"/>
-          ${svgText("WAGON " + String(globalIndex + 1).padStart(2, "0"), x + 20, y + 29, 10, 700, accent)}
-          ${personMarkup}
-          <path d="M${x + 18} ${y + 119} H${x + 396}" stroke="#e7e0d4" stroke-width="1"/>
-        </g>`;
-      }).join("")}
-      <path d="M66 650 H934" stroke="#d7d0c3" stroke-width="1"/>
-      ${svgText("TEAMWORK AUF SCHIENEN", 66, 674, 10, 700, "#858078")}
-      ${svgText("SEITE " + (pageIndex + 1) + " / " + pages.length, 934, 674, 10, 700, "#858078", "end")}
-    </g>`;
-  });
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${pageW}" height="${height}" viewBox="0 0 ${pageW} ${height}">
-    <title>${escapeXml(title)} – Impressum</title><desc>Impressum mit ${data.length} Crew-Wagons auf ${pages.length} Seiten.</desc>${content}
+  const content = wagons.map((wagon, index) => {
+    const column = index % columns;
+    const row = Math.floor(index / columns);
+    return buildWagon(wagon, index, 10 + column * 400, 10 + row * rowHeight, accent);
+  }).join("");
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <title>Schulclub Impressum-Zug</title>
+    <desc>${wagons.length} klassische Zugwagons, jeweils mit bis zu zwei Personen.</desc>
+    ${content}
   </svg>`;
 }
 
 function render() {
-  const svg = buildSvg();
-  preview.innerHTML = svg;
-  const pages = Math.max(1, Math.ceil(wagonsRoot.children.length / Number(pageSizeInput.value)));
-  pageCount.textContent = `${pages} ${pages === 1 ? "SEITE" : "SEITEN"}`;
+  preview.innerHTML = buildSvg();
+  pageCount.textContent = `${wagonsRoot.children.length} WAGONS`;
 }
 
 function downloadSvg() {
@@ -167,15 +171,15 @@ function downloadSvg() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "schulclub-impressum.svg";
+  link.download = "schulclub-impressum-zug.svg";
   link.click();
   URL.revokeObjectURL(url);
 }
 
 document.querySelector("#add-wagon").addEventListener("click", addWagon);
 document.querySelector("#download-svg").addEventListener("click", downloadSvg);
-document.querySelector("#download-all").addEventListener("click", downloadSvg);
-[titleInput, pageSizeInput, accentInput].forEach(input => input.addEventListener("input", render));
+accentInput.addEventListener("input", render);
 
+addWagon();
 addWagon();
 addWagon();
