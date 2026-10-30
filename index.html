@@ -1,81 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login. | Schulclub SVG Generator</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" >
-    <link href="src/main.css" type="text/css" rel="stylesheet" >
-    <script src="src/js/logins.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <title>Impressum-Generator | Schulclub</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+  <link rel="stylesheet" href="src/main.css">
+  <link rel="stylesheet" href="src/css/impressum.css">
 </head>
 <body>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="brand-mark"><i class="fa-solid fa-train"></i></span><span>Schulclub <b>Impressum</b></span></a>
+    <span class="topbar-note">MAGAZIN-WERKZEUG</span>
+  </header>
+  <main class="workspace">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">EUER TEAM. EUER ZUG.</p>
+        <h1>Das Impressum<br><span>auf Schienen.</span></h1>
+        <p class="intro-copy">Gebt allen Beteiligten einen Platz im Zug. Mit Foto, Namen und Aufgaben – fertig zum Export als SVG.</p>
+      </div>
+      <div class="intro-stamp"><i class="fa-solid fa-ticket"></i><span>CREW<br>EDITION</span></div>
+    </section>
 
-<div class="hero bg-base-200 min-h-screen">
-  <div class="hero-content flex-col lg:flex-row-reverse gap-20">
-    <div class="text-center lg:text-left">
-      <h1 class="text-5xl font-bold">Please log in.</h1>
-      <p class="py-6">
-        This website is safed by a password. Please enter your password or use the <button class="btn btn-sm" onclick="demo_login();">Demo Login</button>.
-      </p>
+    <div class="editor-layout">
+      <section class="editor-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">01 / ZUSAMMENSTELLEN</p><h2>Eure Crew</h2></div>
+          <span class="count-pill" id="wagon-count">0 WAGONS</span>
+        </div>
+        <div class="settings-card">
+          <label class="field-label" for="magazine-title">Titel der Zeitschrift</label>
+          <input class="input input-bordered w-full" id="magazine-title" maxlength="48" value="Unser Schulmagazin" placeholder="z. B. Pausenpost">
+          <div class="settings-row">
+            <div><label class="field-label" for="page-size">Wagons pro Seite</label><select class="select select-bordered w-full" id="page-size"><option value="2">2 Wagons</option><option value="3">3 Wagons</option><option value="4" selected>4 Wagons</option><option value="6">6 Wagons</option></select></div>
+            <div><label class="field-label" for="accent-color">Zugfarbe</label><input id="accent-color" class="color-input" type="color" value="#d95d39"></div>
+          </div>
+        </div>
+        <div id="wagons" class="wagon-list" aria-live="polite"></div>
+        <button id="add-wagon" class="btn btn-neutral add-wagon"><i class="fa-solid fa-plus"></i> Wagon hinzufügen</button>
+        <p class="privacy-note"><i class="fa-solid fa-lock"></i> Fotos bleiben in diesem Browser und werden nicht hochgeladen.</p>
+      </section>
+
+      <section class="preview-panel">
+        <div class="panel-heading preview-heading">
+          <div><p class="eyebrow">02 / VORSCHAU</p><h2>Der fertige Zug</h2></div>
+          <span class="live-pill"><span></span> LIVE</span>
+        </div>
+        <div class="preview-toolbar"><span>SVG-VORSCHAU</span><span id="page-count">1 SEITE</span></div>
+        <div class="preview-viewport"><div id="preview" class="preview-canvas"></div></div>
+        <div class="export-row">
+          <button id="download-svg" class="btn btn-primary"><i class="fa-solid fa-download"></i> SVG herunterladen</button>
+          <button id="download-all" class="btn btn-outline"><i class="fa-solid fa-file-arrow-down"></i> Alle Seiten als SVG</button>
+        </div>
+        <p class="export-hint">Der Export enthält alle Seiten untereinander in einer SVG-Datei. Für den Druck kann sie anschließend in einzelne Seiten aufgeteilt werden.</p>
+      </section>
     </div>
-    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div class="card-body">
-        <fieldset class="fieldset">
-          <label class="label">Username</label>
-          <input type="text" class="input" placeholder="Username" id="username" />
-          <label class="label">Password</label>
-          <input type="password" class="input" placeholder="Password" id="password" />
-          <div><button class="link link-hover" onclick='show_lgstatus("Forgot your Password?", "Please message an admin to reset your password or use the demo-login.");'>Forgot password?</button></div>
-          <button class="btn btn-neutral mt-4">Login</button>
-        </fieldset>
+    <footer><span>SCHULCLUB · IMPRESSUM-GENERATOR</span><span>MIT LIEBE ZUSAMMENGESTELLT</span></footer>
+  </main>
+  <template id="wagon-template">
+    <article class="wagon-editor">
+      <div class="wagon-editor-head"><div class="wagon-number">WAGON 01</div><button class="icon-button remove-wagon" type="button" aria-label="Wagon entfernen"><i class="fa-solid fa-trash"></i></button></div>
+      <div class="people-list"></div>
+      <button class="btn btn-sm btn-ghost add-person" type="button"><i class="fa-solid fa-user-plus"></i> Person hinzufügen</button>
+    </article>
+  </template>
+  <template id="person-template">
+    <div class="person-editor">
+      <label class="avatar-upload"><input class="photo-input" type="file" accept="image/*"><span class="photo-placeholder"><i class="fa-solid fa-camera"></i><small>Foto</small></span><img class="person-photo" alt="" hidden></label>
+      <div class="person-fields">
+        <input class="input input-bordered input-sm person-name" maxlength="32" placeholder="Name" aria-label="Name">
+        <input class="input input-bordered input-sm person-roles" maxlength="90" placeholder="Rollen, z. B. Autor, Layout" aria-label="Rollen">
+        <button class="remove-person" type="button"><i class="fa-solid fa-xmark"></i> Person entfernen</button>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Open the modal using ID.showModal() method -->
-<!-- login_status.showModal() -->
-<dialog id="login_status" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold" id="lgstatus_title">Loading...</h3>
-    <p class="py-4" id="lgstatus_text">Loading...</p>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>Got it, close</button>
-  </form>
-</dialog>
-
-<script>
-    const usernameField = document.getElementById("username");
-    const passwordField = document.getElementById("password");
-    const lgstatus = document.getElementById("login_status");
-    const lgstatus_text = document.getElementById("lgstatus_text");
-    const lgstatus_title = document.getElementById("lgstatus_title");
-    
-    function demo_login() {
-        usernameField.value = "Demo";
-        passwordField.value = "DemoPassword-123";
-        show_lgstatus("Successful", "Your temporary demo-login is now able to be opened.");
-    }
-
-    function show_lgstatus(title, text) {
-        lgstatus_text.innerText = text;
-        lgstatus_title.innerText = title;
-        lgstatus.showModal();
-    }
-
-    function login(username, password) {
-        //const { ok, code } = await getLogin(username, password);
-
-        //if (ok) {
-          //localStorage.setItem("loginCode", code);
-        //}
-    }
-</script>
-  
+  </template>
+  <script type="module" src="src/js/Impressum.js"></script>
 </body>
 </html>
