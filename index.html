@@ -34,12 +34,8 @@
           <span class="count-pill" id="wagon-count">0 WAGONS</span>
         </div>
         <div class="settings-card">
-          <label class="field-label" for="magazine-title">Titel der Zeitschrift</label>
-          <input class="input input-bordered w-full" id="magazine-title" maxlength="48" value="Unser Schulmagazin" placeholder="z. B. Pausenpost">
-          <div class="settings-row">
-            <div><label class="field-label" for="page-size">Wagons pro Seite</label><select class="select select-bordered w-full" id="page-size"><option value="2">2 Wagons</option><option value="3">3 Wagons</option><option value="4" selected>4 Wagons</option><option value="6">6 Wagons</option></select></div>
-            <div><label class="field-label" for="accent-color">Zugfarbe</label><input id="accent-color" class="color-input" type="color" value="#d95d39"></div>
-          </div>
+          <label class="field-label" for="accent-color">Farbe der Wagons</label>
+          <input id="accent-color" class="color-input" type="color" value="#d95d39">
         </div>
         <div id="wagons" class="wagon-list" aria-live="polite"></div>
         <button id="add-wagon" class="btn btn-neutral add-wagon"><i class="fa-solid fa-plus"></i> Wagon hinzufügen</button>
@@ -51,13 +47,12 @@
           <div><p class="eyebrow">02 / VORSCHAU</p><h2>Der fertige Zug</h2></div>
           <span class="live-pill"><span></span> LIVE</span>
         </div>
-        <div class="preview-toolbar"><span>SVG-VORSCHAU</span><span id="page-count">1 SEITE</span></div>
+        <div class="preview-toolbar"><span>SVG-VORSCHAU</span><span id="page-count">0 WAGONS</span></div>
         <div class="preview-viewport"><div id="preview" class="preview-canvas"></div></div>
         <div class="export-row">
           <button id="download-svg" class="btn btn-primary"><i class="fa-solid fa-download"></i> SVG herunterladen</button>
-          <button id="download-all" class="btn btn-outline"><i class="fa-solid fa-file-arrow-down"></i> Alle Seiten als SVG</button>
         </div>
-        <p class="export-hint">Der Export enthält alle Seiten untereinander in einer SVG-Datei. Für den Druck kann sie anschließend in einzelne Seiten aufgeteilt werden.</p>
+        <p class="export-hint">Der Export enthält alle Wagons in einem SVG. Das Layout bleibt frei skalierbar und lässt sich direkt weiterverwenden.</p>
       </section>
     </div>
     <footer><span>SCHULCLUB · IMPRESSUM-GENERATOR</span><span>MIT LIEBE ZUSAMMENGESTELLT</span></footer>
