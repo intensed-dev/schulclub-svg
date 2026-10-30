@@ -104,7 +104,7 @@ function buildSvg() {
   for (let i = 0; i < data.length; i += perPage) pages.push(data.slice(i, i + perPage));
   if (!pages.length) pages.push([]);
   const pageW = 1000;
-  const pageH = 720;
+  const pageH = Math.max(720, Math.ceil(perPage / 2) * 210 + 290);
   const gap = 64;
   const height = pages.length * (pageH + gap) - gap;
   const accent = accentInput.value;
